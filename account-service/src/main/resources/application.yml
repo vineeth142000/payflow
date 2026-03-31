@@ -1,0 +1,28 @@
+server:
+  port: 8081   # account service runs on port 8081
+
+spring:
+  application:
+    name: account-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/accountdb
+    username: payflow
+    password: payflow123
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update   # automatically creates/updates tables based on your Java classes
+    show-sql: true       # prints SQL queries in console so you can see what's happening
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    open-in-view: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics   # exposes /actuator/health endpoint
