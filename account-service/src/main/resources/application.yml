@@ -32,3 +32,7 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
     tags-sorter: alpha
+
+jwt:
+  secret: payflow-super-secret-key-that-is-long-enough-for-hs256-algorithm
+  expiration: 86400000
