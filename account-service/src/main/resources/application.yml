@@ -1,5 +1,5 @@
 server:
-  port: 8081   # account service runs on port 8081
+  port: 8081
 
 spring:
   application:
@@ -13,16 +13,22 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update   # automatically creates/updates tables based on your Java classes
-    show-sql: true       # prints SQL queries in console so you can see what's happening
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
-    open-in-view: false
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics   # exposes /actuator/health endpoint
+        include: health,info,metrics
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
