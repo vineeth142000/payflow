@@ -20,11 +20,26 @@ spring:
       hibernate:
         format_sql: true
 
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000ms
+
+  cache:
+    type: redis
+    redis:
+      time-to-live: 600000
+
 management:
   endpoints:
     web:
       exposure:
         include: health,info,metrics
+
+jwt:
+  secret: payflow-super-secret-key-that-is-long-enough-for-hs256-algorithm
+  expiration: 86400000
 
 springdoc:
   api-docs:
@@ -32,7 +47,3 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
     tags-sorter: alpha
-
-jwt:
-  secret: payflow-super-secret-key-that-is-long-enough-for-hs256-algorithm
-  expiration: 86400000

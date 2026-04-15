@@ -15,3 +15,4 @@ spring:
       properties:
         spring.json.trusted.packages: "*"
         spring.json.type.mapping: transactionEvent:com.payflow.notification.TransactionEvent
+
