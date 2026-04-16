@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  AWS_REGION: us-east-1
+  AWS_ACCOUNT_ID: 819048646487
+  ECR_REGISTRY: 819048646487.dkr.ecr.us-east-1.amazonaws.com
+
 jobs:
 
   test:
@@ -68,8 +73,8 @@ jobs:
           name: notification-service-jar
           path: notification-service/target/*.jar
 
-  docker-build:
-    name: Build Docker Images
+  docker-push-ecr:
+    name: Build and Push to ECR
     runs-on: ubuntu-latest
     needs: build
     steps:
@@ -86,29 +91,50 @@ jobs:
       - name: Build JARs
         run: mvn clean package -DskipTests
 
-      - name: Build account-service Docker image
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push account-service
         working-directory: account-service
         run: |
           docker build \
-            -t payflow/account-service:${{ github.sha }} \
-            -t payflow/account-service:latest \
+            -t $ECR_REGISTRY/payflow/account-service:${{ github.sha }} \
+            -t $ECR_REGISTRY/payflow/account-service:latest \
             .
+          docker push $ECR_REGISTRY/payflow/account-service:${{ github.sha }}
+          docker push $ECR_REGISTRY/payflow/account-service:latest
 
-      - name: Build transaction-service Docker image
+      - name: Build and push transaction-service
         working-directory: transaction-service
         run: |
           docker build \
-            -t payflow/transaction-service:${{ github.sha }} \
-            -t payflow/transaction-service:latest \
+            -t $ECR_REGISTRY/payflow/transaction-service:${{ github.sha }} \
+            -t $ECR_REGISTRY/payflow/transaction-service:latest \
             .
+          docker push $ECR_REGISTRY/payflow/transaction-service:${{ github.sha }}
+          docker push $ECR_REGISTRY/payflow/transaction-service:latest
 
-      - name: Build notification-service Docker image
+      - name: Build and push notification-service
         working-directory: notification-service
         run: |
           docker build \
-            -t payflow/notification-service:${{ github.sha }} \
-            -t payflow/notification-service:latest \
+            -t $ECR_REGISTRY/payflow/notification-service:${{ github.sha }} \
+            -t $ECR_REGISTRY/payflow/notification-service:latest \
             .
+          docker push $ECR_REGISTRY/payflow/notification-service:${{ github.sha }}
+          docker push $ECR_REGISTRY/payflow/notification-service:latest
 
-      - name: List built images
-        run: docker images | grep payflow
+      - name: Print deployed image tags
+        run: |
+          echo "Deployed images:"
+          echo "  account-service:    $ECR_REGISTRY/payflow/account-service:${{ github.sha }}"
+          echo "  transaction-service: $ECR_REGISTRY/payflow/transaction-service:${{ github.sha }}"
+          echo "  notification-service: $ECR_REGISTRY/payflow/notification-service:${{ github.sha }}"
