@@ -1,0 +1,30 @@
+replicaCount: 1
+
+image:
+  repository: 819048646487.dkr.ecr.us-east-1.amazonaws.com/payflow/account-service
+  tag: latest
+  pullPolicy: Always
+
+service:
+  type: LoadBalancer
+  port: 8081
+
+env:
+  SPRING_DATASOURCE_URL: jdbc:postgresql://account-db-postgresql:5432/accountdb
+  SPRING_DATASOURCE_USERNAME: payflow
+  SPRING_DATASOURCE_PASSWORD: payflow123
+  SPRING_DATA_REDIS_HOST: redis-master
+  SPRING_DATA_REDIS_PORT: "6379"
+  SPRING_FLYWAY_BASELINE_ON_MIGRATE: "true"
+  SPRING_FLYWAY_BASELINE_VERSION: "0"
+  SPRING_CACHE_TYPE: redis
+  JWT_SECRET: payflow-super-secret-key-that-is-long-enough-for-hs256-algorithm
+  JWT_EXPIRATION: "86400000"
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "250m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"

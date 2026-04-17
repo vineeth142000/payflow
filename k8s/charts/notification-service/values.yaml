@@ -1,0 +1,21 @@
+replicaCount: 1
+
+image:
+  repository: 819048646487.dkr.ecr.us-east-1.amazonaws.com/payflow/notification-service
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8083
+
+env:
+  SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "250m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
